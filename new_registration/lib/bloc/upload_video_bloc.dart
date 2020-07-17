@@ -56,9 +56,10 @@ class UploadVideoBloc extends Bloc<UploadVideoEvent, UploadVideoState> {
       _videoPlayerController = VideoPlayerController.file(File(video.path))..initialize();
       if (!_videoPlayerController.value.initialized) {
         await _videoPlayerController.play();
-        yield SelectVideoSuccessState(
-            videoPlayerControllerInitialized: true, videoPlayerController: _videoPlayerController);
       }
+
+      yield SelectVideoSuccessState(
+          videoPlayerControllerInitialized: true, videoPlayerController: _videoPlayerController);
 
 //        ..initialize().then((_) {
 //          _videoPlayerController.play();
