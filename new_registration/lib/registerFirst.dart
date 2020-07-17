@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:new_registration/bloc/upload_video_bloc.dart';
 import 'package:new_registration/widgets/stepProgressView.dart';
+import 'package:video_player/video_player.dart';
 
 class RegisterFirst extends StatefulWidget {
   RegisterFirst({Key key, this.title}) : super(key: key);
@@ -30,6 +36,7 @@ class _RegisterFirstState extends State<RegisterFirst> {
 
   int _curPage = 1;
   PageController _pageController;
+
   @override
 //  void initState() {
 //    super.initState();
@@ -87,7 +94,14 @@ class _RegisterFirstState extends State<RegisterFirst> {
                 _curPage = i + 1;
               });
             },
-            children: <Widget>[Page1(), Page2(), Page3()],
+            children: <Widget>[
+              BlocProvider<UploadVideoBloc>(
+                create: (BuildContext context) => UploadVideoBloc(),
+                child: Page1(),
+              ),
+              Page2(),
+              Page3()
+            ],
           ),
         )
       ],
@@ -102,10 +116,110 @@ class Page1 extends StatefulWidget {
 
 class _Page1State extends State<Page1> {
   @override
+  File _image;
+  File _cameraImage;
+
+  File _cameraVideo;
+  final ImagePicker _picker = ImagePicker();
+
+  PickedFile _video;
+  PickedFile _imageFile;
+
+  VideoPlayerController _cameraVideoPlayerController;
+// This funcion will helps you to pick a Video File
+//  _pickVideo(ImageSource source, {BuildContext context}) async {
+////    File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
+//
+//    final PickedFile video = await _picker.getVideo(source: source, maxDuration: const Duration(seconds: 10));
+//
+//    _video = video;
+//    _videoPlayerController = VideoPlayerController.file(File(_video.path))
+//      ..initialize().then((_) {
+//        setState(() {});
+//        _videoPlayerController.play();
+//      });
+//  }
+
+  UploadVideoBloc _uploadVideoBloc;
+
+  void _initBloc() {
+    _uploadVideoBloc ??= BlocProvider.of<UploadVideoBloc>(context);
+  }
+
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.yellow,
-    );
+    _initBloc();
+    return BlocBuilder<UploadVideoBloc, UploadVideoState>(
+        bloc: _uploadVideoBloc,
+        builder: (BuildContext context, UploadVideoState videoState) {
+          if (videoState is SelectVideoSuccessState) {
+            if (videoState.videoPlayerController.value.initialized) {
+              return Column(
+                children: <Widget>[
+                  Container(
+                    color: Colors.yellow,
+                  ),
+                  Container(
+                      child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.432,
+                        height: 124,
+                        child: VideoPlayer(videoState.videoPlayerController),
+                      )
+
+                      /*
+                  if (_video != null)
+                    _videoPlayerController.value.initialized
+                        ?
+//                    ? AspectRatio(
+//                        aspectRatio: _videoPlayerController.value.aspectRatio,
+//                        child: VideoPlayer(_videoPlayerController),
+//                      )
+                        Container(
+                            width: MediaQuery.of(context).size.width * 0.432,
+                            height: 124,
+                            child: VideoPlayer(_videoPlayerController),
+                          )
+                        : Container(),
+                  Text(
+                    "Click on Pick Video to select video",
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+//                  _pickVideo(ImageSource.gallery, context: context);
+//                      _uploadVideoBloc.add(SelectSubmitEvent(source: ImageSource.gallery));
+
+                      _uploadVideoBloc.add(SelectSubmitEvent(source: ImageSource.gallery));
+                    },
+                    child: Text("Pick Video From Gallery"),
+                  ),
+                  */
+                    ],
+                  )),
+                ],
+              );
+            }
+            return Container();
+          }
+          return Column(
+            children: <Widget>[
+              Text(
+                "Click on Pick Video to select video",
+                style: TextStyle(fontSize: 18.0),
+              ),
+              RaisedButton(
+                onPressed: () {
+//                  _pickVideo(ImageSource.gallery, context: context);
+//                      _uploadVideoBloc.add(SelectSubmitEvent(source: ImageSource.gallery));
+
+                  _uploadVideoBloc.add(SelectSubmitEvent(source: ImageSource.gallery));
+                },
+                child: Text("Pick Video From Gallery"),
+              ),
+            ],
+          );
+        });
   }
 }
 
