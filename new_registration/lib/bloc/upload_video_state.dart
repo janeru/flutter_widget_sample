@@ -13,20 +13,19 @@ class SelectVideoCanceledState extends UploadVideoState {}
 class SelectVideoPendingState extends UploadVideoState {}
 
 class SelectVideoSuccessState extends UploadVideoState {
-  const SelectVideoSuccessState({this.videoPlayerController, this.videoPlayerControllerInitialized});
+  const SelectVideoSuccessState({this.videoPlayerController});
 
-  final bool videoPlayerControllerInitialized;
   final VideoPlayerController videoPlayerController;
 
   SelectVideoSuccessState copyWith(
-      {VideoPlayerController videoPlayerController, bool videoPlayerControllerInitialized}) {
+      {VideoPlayerController videoPlayerController}) {
     return SelectVideoSuccessState(
         videoPlayerController: videoPlayerController ?? this.videoPlayerController,
-        videoPlayerControllerInitialized: videoPlayerControllerInitialized);
+       );
   }
 
   @override
-  List<Object> get props => <Object>[videoPlayerControllerInitialized, videoPlayerController];
+  List<Object> get props => <Object>[videoPlayerController];
 }
 
 class SelectVideoErrorState extends UploadVideoState {

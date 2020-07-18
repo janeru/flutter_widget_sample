@@ -36,8 +36,12 @@ class UploadVideoBloc extends Bloc<UploadVideoEvent, UploadVideoState> {
 
   Stream<UploadVideoState> _uploadVideo(SelectSubmitEvent event) async* {
     final ImagePicker _picker = ImagePicker();
-    VideoPlayerController _videoPlayerController;
     PickedFile _video;
+    VideoPlayerController _videoPlayerController;
+
+    _videoPlayerController = event.videoPlayerController;
+
+
     try {
       yield SelectVideoPendingState();
 
@@ -48,16 +52,13 @@ class UploadVideoBloc extends Bloc<UploadVideoEvent, UploadVideoState> {
         return;
       }
 
-//      _videoPlayerController = VideoPlayerController.file(File(video.path))
-//        ..initialize().then((_) {
-//          _videoPlayerController.play();
-//        });
+      _videoPlayerController = VideoPlayerController.file(File(video.path));
 
-      _videoPlayerController = VideoPlayerController.file(File(video.path))..initialize();
+      await _videoPlayerController.initialize();
       await _videoPlayerController.play();
 
       yield SelectVideoSuccessState(
-          videoPlayerControllerInitialized: true, videoPlayerController: _videoPlayerController);
+        videoPlayerController: _videoPlayerController);
 
 //        ..initialize().then((_) {
 //          _videoPlayerController.play();
@@ -66,5 +67,7 @@ class UploadVideoBloc extends Bloc<UploadVideoEvent, UploadVideoState> {
     } on Exception catch (e) {
       yield SelectVideoErrorState(errorMessage: e.toString());
     }
+
+
   }
 }

@@ -124,7 +124,7 @@ class _Page1State extends State<Page1> {
 
   PickedFile _video;
   PickedFile _imageFile;
-
+  VideoPlayerController _videoPlayerController;
   VideoPlayerController _cameraVideoPlayerController;
 // This funcion will helps you to pick a Video File
 //  _pickVideo(ImageSource source, {BuildContext context}) async {
@@ -213,7 +213,8 @@ class _Page1State extends State<Page1> {
 //                  _pickVideo(ImageSource.gallery, context: context);
 //                      _uploadVideoBloc.add(SelectSubmitEvent(source: ImageSource.gallery));
 
-                  _uploadVideoBloc.add(SelectSubmitEvent(source: ImageSource.gallery));
+                  _uploadVideoBloc.add(SelectSubmitEvent(source: ImageSource.gallery,
+                  videoPlayerController:_videoPlayerController ));
                 },
                 child: Text("Pick Video From Gallery"),
               ),
